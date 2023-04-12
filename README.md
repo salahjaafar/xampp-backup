@@ -8,7 +8,7 @@ Here's a brief explanation of the changes made to the script:
  - Finally, the script removes any backup files older than 7 days using the find command.
 You can save this script to a file (e.g. backup.sh), make it executable (chmod +x backup.sh), and run it (./backup.sh) to backup and rewrite multiple databases. You can also schedule this script to run automatically using a cron job to create regular backups for your databases.
 
-#Automatic backup on Ubuntu system and linux mint
+**Automatic backup on Ubuntu system and linux mint**
 
 If you want to view the cron jobs that are scheduled on your Ubuntu system, you can use the `crontab` command to display the contents of the cron table. Here's how to do it:
 
