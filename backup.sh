@@ -1,36 +1,39 @@
 #!/bin/bash
+#Powered by www.techno.rn.tn
+# Get the current date and time
+DATE=$(date +%Y-%m-%d-%H-%M)
 
-# Database configuration (techno.rn.tn)
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=password
+# Dump all the databases to the backup directory
+# List of databases separated by space
+databases="database1 database2 database3"
 
-# List of databases to backup and rewrite
-DATABASES=("database1" "database2" "database3")
-
-# Backup directory
-BACKUP_DIR=/path/to/backup/directory
-
-# Date format for backup file name
-DATE=$(date +%Y-%m-%d_%H-%M-%S)
-
-for DB_NAME in "${DATABASES[@]}"
-do
-  # Backup file name
-  BACKUP_FILE=${BACKUP_DIR}/${DB_NAME}_${DATE}.sql
-
-  # Create backup directory if it doesn't exist
-  mkdir -p ${BACKUP_DIR}
-
-  # Backup database
-  mysqldump -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} > ${BACKUP_FILE}
-
-  # Compress backup file
-  gzip ${BACKUP_FILE}
-
-  # Rewrite database from backup
-  zcat ${BACKUP_FILE}.gz | mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} ${DB_NAME}
-
-  # Remove backups older than 7 days
-  find ${BACKUP_DIR} -type f -name '*.gz' -mtime +7 -delete
+# Loop through each database and create a backup
+for database in $databases; do
+ /opt/lampp/bin/mysqldump --user=root --password="password" "$database" > "/opt/lampp/htdocs/backup/$database-$DATE.sql"
 done
+
+# Remove old backup files
+find /opt/lampp/htdocs/backup/ -type f -mtime +120 -delete
+
+# Schedule the script to run every 23 hours
+crontab -l | { cat; echo "0 23 * * * /home/salah/backup.sh"; } | crontab -
+
+#!/bin/bash
+
+# Define the directory where your SQL files are located
+sql_directory="/opt/lampp/htdocs/backup/"
+
+# Define the name of the tar.gz file
+output_file="/opt/lampp/htdocs/backup/all_sql_files-$DATE.tar.gz"
+
+# Change to the SQL directory
+cd "$sql_directory"
+
+# Compress all SQL files into one tar.gz file
+tar czvf "$output_file" *.sql
+
+# Remove the original SQL files
+rm -f *.sql
+
+# Display a message indicating the process is complete
+echo "SQL files compressed and removed successfully."
