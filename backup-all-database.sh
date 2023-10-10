@@ -18,7 +18,7 @@ BACKUP_FILE=${BACKUP_DIR}/backup_${DATE}.sql.gz
 for DB_NAME in $(mysqlshow -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} | awk '{print $2}' | grep -v '^Database$')
 do
     # Backup each database to a file
-    mysqldump -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} | gzip > ${BACKUP_DIR}/${DB_NAME}.sql.gz
+    /opt/lampp/bin/mysqldump -h ${DB_HOST} -u ${DB_USER} -p${DB_PASS} ${DB_NAME} | gzip > ${BACKUP_DIR}/${DB_NAME}.sql.gz
 done
 
 # Compress all backup files into a single gzip file
